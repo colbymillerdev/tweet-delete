@@ -1,0 +1,61 @@
+{
+  "extends": ["airbnb-base", "prettier"],
+  "env": {
+    "node": true,
+    "jest": true
+  },
+  "globals": {
+    "StatusError": true
+  },
+  "rules": {
+    "prefer-destructuring": [
+      "error",
+      {
+        "VariableDeclarator": {
+          "array": true,
+          "object": true
+        },
+        "AssignmentExpression": {
+          "array": true,
+          "object": false
+        }
+      },
+      {
+        "enforceForRenamedProperties": false
+      }
+    ],
+    "import/no-unresolved": 0,
+    "import/no-extraneous-dependencies": 0,
+    "camelcase": 0,
+    "arrow-body-style": "off",
+    "object-curly-newline": [
+      "error",
+      {
+        "consistent": true
+      }
+    ],
+    "comma-dangle": [
+      "error",
+      {
+        "arrays": "always-multiline",
+        "objects": "always-multiline",
+        "imports": "always-multiline",
+        "exports": "always-multiline",
+        "functions": "never"
+      }
+    ],
+    "max-len": ["warn", 120],
+    "no-console": 0,
+    "no-restricted-properties": [
+      "error",
+      {
+        "object": "nodemailer",
+        "message": "Use utils/mailer instead."
+      },
+      {
+        "property": "truncateAndSeed",
+        "message": "You probably don't want to use this.  Use truncateDatabase() to remove data without reseeding static tables."
+      }
+    ]
+  }
+}
