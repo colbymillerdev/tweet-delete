@@ -16,13 +16,16 @@
     "@oclif/dev-cli": "^1",
     "eslint": "^5.13",
     "eslint-config-oclif": "^3.1",
-    "prettier": "^1.19.1"
+    "prettier": "^1.19.1",
+    "globby": "^10"
   },
   "engines": {
     "node": ">=8.0.0"
   },
   "files": [
     "/bin",
+    "/npm-shrinkwrap.json",
+    "/oclif.manifest.json",
     "/src"
   ],
   "homepage": "https://github.com/colbymillerdev/tweet-delete",
@@ -32,12 +35,17 @@
   "license": "MIT",
   "main": "src/index.js",
   "oclif": {
-    "bin": "tweet-delete"
+    "commands": "./src/commands",
+    "bin": "tweet-delete",
+    "plugins": [
+      "@oclif/plugin-help"
+    ]
   },
   "repository": "colbymillerdev/tweet-delete",
   "scripts": {
+    "postpack": "rm -f oclif.manifest.json",
     "posttest": "eslint .",
-    "prepack": "oclif-dev readme",
+    "prepack": "oclif-dev manifest && oclif-dev readme",
     "test": "echo NO TESTS",
     "version": "oclif-dev readme && git add README.md"
   }
