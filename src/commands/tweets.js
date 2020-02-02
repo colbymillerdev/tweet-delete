@@ -13,12 +13,18 @@ class TweetCommand extends Command {
     originalFile = originalFile.replace('window.YTD.tweet.part0 = ', '');
     const tweets = JSON.parse(originalFile);
 
-    tweets.forEach(({ tweet }) => {
-      // Check for retweet, don't delete.
-      if (tweet.full_text.startsWith('RT')) return console.log('RETWEET');
+    try {
+      tweets.forEach(({ tweet }) => {
+        // Check for retweet, don't delete.
+        if (tweet.full_text.startsWith('RT')) return console.log('RETWEET');
 
-      console.log(tweet.id);
-    });
+        console.log(tweet.id);
+      });
+    } catch (e) {
+      this.error(
+        'It is likely Twitter has updated the JSON structure of tweet.js. Please create an issue at https://github.com/colbymillerdev/tweet-delete/issues so tweet-delete can be updated :)'
+      );
+    }
 
     this.log(`Delete all tweets on and before ${date}`);
   }
