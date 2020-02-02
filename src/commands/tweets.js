@@ -1,11 +1,24 @@
 const { Command, flags } = require('@oclif/command');
-//import './tweet.js';
-var fs = require('fs');
+const fs = require('fs');
 
 class TweetCommand extends Command {
   async run() {
     const { flags } = this.parse(TweetCommand);
     const date = flags.date;
+    let deleteCount = 0;
+
+    // Read in file and replace assignment to create parsed JSON.
+    // TODO: Change back to tweet.js
+    let originalFile = fs.readFileSync('tweet-copy.js', 'utf8');
+    originalFile = originalFile.replace('window.YTD.tweet.part0 = ', '');
+    const tweets = JSON.parse(originalFile);
+
+    tweets.forEach(({ tweet }) => {
+      // Check for retweet, don't delete.
+      if (tweet.full_text.startsWith('RT')) return console.log('RETWEET');
+
+      console.log(tweet.id);
+    });
 
     this.log(`Delete all tweets on and before ${date}`);
   }
