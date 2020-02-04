@@ -1,6 +1,7 @@
 const { Command, flags } = require('@oclif/command');
 const fs = require('fs');
 const moment = require('moment');
+const OAuth = require('oauth');
 
 class TweetCommand extends Command {
   async run() {
@@ -16,8 +17,26 @@ class TweetCommand extends Command {
     originalFile = originalFile.replace('window.YTD.tweet.part0 = ', '');
     const tweets = JSON.parse(originalFile);
 
+    const config = {
+      consumer_key: '',
+      consumer_secret: '',
+      access_token_key: '',
+      access_token_secret: '',
+    };
+
     // TODO: Add in user friendly prompts to gather information.
-    // TODO: Setup Twitter API connections and keys.
+
+    // OAuth to authenticate with twitter.
+    const oauth = new OAuth.OAuth(
+      'https://api.twitter.com/oauth/request_token',
+      'https://api.twitter.com/oauth/access_token',
+      config.consumer_key,
+      config.consumer_secret,
+      '1.0A',
+      null,
+      'HMAC-SHA1'
+    );
+
     try {
       tweets.forEach(({ tweet }) => {
         // If tweet date is after the input date, don't delete.
@@ -28,7 +47,7 @@ class TweetCommand extends Command {
         }
 
         // If retweet, don't attempt delete.
-        if (tweet.full_text.startsWith('RT')) {
+        if (tweet.full_text.startsWith('RT') || tweet.retweet_status) {
           retweetCount += 1;
           return;
         }
@@ -39,7 +58,6 @@ class TweetCommand extends Command {
         return;
       });
     } catch (e) {
-      console.log(e);
       this.error(
         'It is likely Twitter has updated the JSON structure of tweet.js. Please create an issue at https://github.com/colbymillerdev/tweet-delete/issues so tweet-delete can be updated :)'
       );

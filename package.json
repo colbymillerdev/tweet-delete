@@ -11,7 +11,8 @@
     "@oclif/command": "^1",
     "@oclif/config": "^1",
     "@oclif/plugin-help": "^2",
-    "moment": "^2.24.0"
+    "moment": "^2.24.0",
+    "oauth": "^0.9.15"
   },
   "devDependencies": {
     "@oclif/dev-cli": "^1",
