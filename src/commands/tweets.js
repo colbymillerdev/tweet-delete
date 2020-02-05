@@ -9,9 +9,7 @@ class TweetCommand extends Command {
     const inputDate = new Date(flags.date);
     let deleteCount = 0;
     let retweetCount = 0;
-    let afterDateCount = 0;
 
-    // Read in file and replace assignment to create parsed JSON.
     // TODO: Change back to tweet.js
     let originalFile = fs.readFileSync('tweet-copy.js', 'utf8');
     originalFile = originalFile.replace('window.YTD.tweet.part0 = ', '');
@@ -26,7 +24,7 @@ class TweetCommand extends Command {
 
     // TODO: Add in user friendly prompts to gather information.
 
-    // OAuth to authenticate with twitter.
+    // Authenticate.
     const oauth = new OAuth.OAuth(
       'https://api.twitter.com/oauth/request_token',
       'https://api.twitter.com/oauth/access_token',
@@ -38,34 +36,50 @@ class TweetCommand extends Command {
     );
 
     try {
-      tweets.forEach(({ tweet }) => {
-        // If tweet date is after the input date, don't delete.
-        const tweetDate = new Date(tweet.created_at);
-        if (moment(tweetDate).isAfter(moment(inputDate))) {
-          afterDateCount += 1;
-          return;
-        }
+      await Promise.all(
+        tweets.map(async ({ tweet }) => {
+          const tweetDate = new Date(tweet.created_at);
+          if (moment(tweetDate).isAfter(moment(inputDate))) return;
 
-        // If retweet, don't attempt delete.
-        if (tweet.full_text.startsWith('RT') || tweet.retweet_status) {
-          retweetCount += 1;
-          return;
-        }
+          if (tweet.full_text.startsWith('RT') || tweet.retweet_status) {
+            return new Promise(resolve => {
+              oauth.post(
+                `https://api.twitter.com/1.1/statuses/unretweet/${tweet.id}.json`,
+                config.access_token_key,
+                config.access_token_secret,
+                {},
+                () => {
+                  this.log(`Unretweeted tweet ${tweet.id}`);
+                  retweetCount += 1;
+                  resolve();
+                }
+              );
+            });
+          }
 
-        // TODO: Make call to Twitter API to delete tweet.
-        console.log(`Deteting tweet with ID = ${tweet.id}`);
-        deleteCount += 1;
-        return;
-      });
+          return new Promise(resolve => {
+            oauth.post(
+              `https://api.twitter.com/1.1/statuses/destroy/${tweet.id}.json`,
+              config.access_token_key,
+              config.access_token_secret,
+              {},
+              () => {
+                this.log(`Deleted tweet ${tweet.id}`);
+                deleteCount += 1;
+                resolve();
+              }
+            );
+          });
+        })
+      );
     } catch (e) {
       this.error(
         'It is likely Twitter has updated the JSON structure of tweet.js. Please create an issue at https://github.com/colbymillerdev/tweet-delete/issues so tweet-delete can be updated :)'
       );
     }
 
-    this.log(`${deleteCount} tweets were successfully deleted.`);
-    this.log(`${afterDateCount} tweets were after the specified date and NOT deleted.`);
-    this.log(`${retweetCount} tweets were retweeted from other users and NOT deleted.`);
+    this.log(`${deleteCount} tweet(s) successfully deleted.`);
+    this.log(`${retweetCount} tweet(s) successfull unretweeted.`);
   }
 }
 
