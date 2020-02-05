@@ -3,6 +3,41 @@ const fs = require('fs');
 const moment = require('moment');
 const OAuth = require('oauth');
 
+const config = {
+  consumer_key: '',
+  consumer_secret: '',
+  access_token_key: '',
+  access_token_secret: '',
+};
+
+const deleteTweet = (tweetId, oauth) => {
+  return new Promise(resolve => {
+    oauth.post(
+      `https://api.twitter.com/1.1/statuses/destroy/${tweetId}.json`,
+      config.access_token_key,
+      config.access_token_secret,
+      {},
+      () => {
+        resolve();
+      }
+    );
+  });
+};
+
+const unretweet = (tweetId, oauth) => {
+  return new Promise(resolve => {
+    oauth.post(
+      `https://api.twitter.com/1.1/statuses/unretweet/${tweetId}.json`,
+      config.access_token_key,
+      config.access_token_secret,
+      {},
+      () => {
+        resolve();
+      }
+    );
+  });
+};
+
 class TweetCommand extends Command {
   async run() {
     const { flags } = this.parse(TweetCommand);
@@ -14,13 +49,6 @@ class TweetCommand extends Command {
     let originalFile = fs.readFileSync('tweet-copy.js', 'utf8');
     originalFile = originalFile.replace('window.YTD.tweet.part0 = ', '');
     const tweets = JSON.parse(originalFile);
-
-    const config = {
-      consumer_key: '',
-      consumer_secret: '',
-      access_token_key: '',
-      access_token_secret: '',
-    };
 
     // TODO: Add in user friendly prompts to gather information.
 
@@ -42,33 +70,15 @@ class TweetCommand extends Command {
           if (moment(tweetDate).isAfter(moment(inputDate))) return;
 
           if (tweet.full_text.startsWith('RT') || tweet.retweet_status) {
-            return new Promise(resolve => {
-              oauth.post(
-                `https://api.twitter.com/1.1/statuses/unretweet/${tweet.id}.json`,
-                config.access_token_key,
-                config.access_token_secret,
-                {},
-                () => {
-                  this.log(`Unretweeted tweet ${tweet.id}`);
-                  retweetCount += 1;
-                  resolve();
-                }
-              );
+            return unretweet(tweet.id, oauth).then(() => {
+              this.log(`Unretweeted tweet ${tweet.id}`);
+              retweetCount += 1;
             });
           }
 
-          return new Promise(resolve => {
-            oauth.post(
-              `https://api.twitter.com/1.1/statuses/destroy/${tweet.id}.json`,
-              config.access_token_key,
-              config.access_token_secret,
-              {},
-              () => {
-                this.log(`Deleted tweet ${tweet.id}`);
-                deleteCount += 1;
-                resolve();
-              }
-            );
+          return deleteTweet(tweet.id, oauth).then(() => {
+            this.log(`Deleted tweet ${tweet.id}`);
+            deleteCount += 1;
           });
         })
       );
