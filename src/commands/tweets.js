@@ -11,28 +11,36 @@ const config = {
 };
 
 const deleteTweet = (tweetId, oauth) => {
-  return new Promise(resolve => {
+  return new Promise((resolve, reject) => {
     oauth.post(
       `https://api.twitter.com/1.1/statuses/destroy/${tweetId}.json`,
       config.access_token_key,
       config.access_token_secret,
       {},
-      () => {
-        resolve();
+      (e, data) => {
+        if (e) {
+          reject();
+        } else {
+          resolve();
+        }
       }
     );
   });
 };
 
 const unretweet = (tweetId, oauth) => {
-  return new Promise(resolve => {
+  return new Promise((resolve, reject) => {
     oauth.post(
       `https://api.twitter.com/1.1/statuses/unretweet/${tweetId}.json`,
       config.access_token_key,
       config.access_token_secret,
       {},
-      () => {
-        resolve();
+      (e, data) => {
+        if (e) {
+          reject();
+        } else {
+          resolve();
+        }
       }
     );
   });
@@ -70,16 +78,20 @@ class TweetCommand extends Command {
           if (moment(tweetDate).isAfter(moment(inputDate))) return;
 
           if (tweet.full_text.startsWith('RT') || tweet.retweet_status) {
-            return unretweet(tweet.id, oauth).then(() => {
-              this.log(`Unretweeted tweet ${tweet.id}`);
-              retweetCount += 1;
-            });
+            return unretweet(tweet.id, oauth)
+              .then(() => {
+                this.log(`Unretweeted tweet ${tweet.id}`);
+                retweetCount += 1;
+              })
+              .catch(() => this.log(`There was an issue trying to unretweet tweet ${tweet.id}`));
           }
 
-          return deleteTweet(tweet.id, oauth).then(() => {
-            this.log(`Deleted tweet ${tweet.id}`);
-            deleteCount += 1;
-          });
+          return deleteTweet(tweet.id, oauth)
+            .then(() => {
+              this.log(`Deleted tweet ${tweet.id}`);
+              deleteCount += 1;
+            })
+            .catch(() => this.log(`There was an issue trying to delete tweet ${tweet.id}`));
         })
       );
     } catch (e) {
