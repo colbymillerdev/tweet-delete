@@ -3,6 +3,7 @@ const fs = require('fs');
 const moment = require('moment');
 const OAuth = require('oauth');
 const inquirer = require('inquirer');
+const { cli } = require('cli-ux');
 
 const config = {
   consumer_key: '',
@@ -47,6 +48,11 @@ const unretweet = (tweetId, oauth) => {
   });
 };
 
+const inputValidator = value => {
+  if (value === '') return 'Please enter a value';
+  return true;
+};
+
 class TweetCommand extends Command {
   async run() {
     const { flags } = this.parse(TweetCommand);
@@ -83,37 +89,25 @@ class TweetCommand extends Command {
           type: 'input',
           name: 'consumerKey',
           message: 'Enter your "API Key" value:',
-          validate: value => {
-            if (value === '') return 'Please enter a value';
-            return true;
-          },
+          validate: inputValidator,
         },
         {
           type: 'input',
           name: 'consumerSecret',
           message: 'Enter your "API Secret Key" value:',
-          validate: value => {
-            if (value === '') return 'Please enter a value';
-            return true;
-          },
+          validate: inputValidator,
         },
         {
           type: 'input',
           name: 'accessTokenKey',
           message: 'Enter your "Access Token" value:',
-          validate: value => {
-            if (value === '') return 'Please enter a value';
-            return true;
-          },
+          validate: inputValidator,
         },
         {
           type: 'input',
           name: 'accessTokenSecret',
           message: 'Enter your "Access Token Secret" value:',
-          validate: value => {
-            if (value === '') return 'Please enter a value';
-            return true;
-          },
+          validate: inputValidator,
         },
       ]);
 
@@ -122,6 +116,8 @@ class TweetCommand extends Command {
       config.consumer_secret = responses.consumerSecret;
       config.access_token_key = responses.accessTokenKey;
       config.access_token_secret = responses.accessTokenSecret;
+
+      cli.action.start('Deleting tweets 💥');
 
       await Promise.all(
         tweets.map(async ({ tweet }) => {
@@ -145,6 +141,8 @@ class TweetCommand extends Command {
             .catch(() => this.log(`There was an issue trying to delete tweet ${tweet.id}`));
         })
       );
+
+      cli.action.stop();
     } catch (e) {
       this.error(
         'It is likely Twitter has updated the JSON structure of tweet.js. Please create an issue at https://github.com/colbymillerdev/tweet-delete/issues so tweet-delete can be updated :)'
