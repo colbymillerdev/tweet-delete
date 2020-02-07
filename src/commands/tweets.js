@@ -55,8 +55,6 @@ const inputValidator = value => {
 
 class TweetCommand extends Command {
   async run() {
-    const { flags } = this.parse(TweetCommand);
-    const inputDate = new Date(flags.date);
     let deleteCount = 0;
     let retweetCount = 0;
 
@@ -77,13 +75,18 @@ class TweetCommand extends Command {
     );
 
     try {
-      // Provide user set of prompts to get info.
+      // Provide user with a set of prompts.
       const responses = await inquirer.prompt([
         {
           type: 'input',
-          name: 'date',
+          name: 'inputDate',
           message: 'Delete tweets starting from what date?',
           default: moment().format('MM-DD-YYYY'),
+          validate: value => {
+            const validDate = moment(value, 'MM-DD-YYYY', true).isValid();
+            if (validDate) return true;
+            return 'Please enter a valid date';
+          },
         },
         {
           type: 'input',
@@ -117,6 +120,8 @@ class TweetCommand extends Command {
       config.access_token_key = responses.accessTokenKey;
       config.access_token_secret = responses.accessTokenSecret;
 
+      const inputDate = new Date(responses.inputDate);
+
       cli.action.start('Deleting tweets 💥');
 
       await Promise.all(
@@ -145,7 +150,7 @@ class TweetCommand extends Command {
       cli.action.stop();
     } catch (e) {
       this.error(
-        'It is likely Twitter has updated the JSON structure of tweet.js. Please create an issue at https://github.com/colbymillerdev/tweet-delete/issues so tweet-delete can be updated :)'
+        'Please make sure your Consumer Keys and Access Tokens are entered correctly.\n\nIt is also possible Twitter has updated the JSON structure of tweet.js. Please create an issue at https://github.com/colbymillerdev/tweet-delete/issues so tweet-delete can be updated 🙂'
       );
     }
 
@@ -164,7 +169,6 @@ TweetCommand.flags = {
   version: flags.version({ char: 'v' }),
   // add --help flag to show CLI version
   help: flags.help({ char: 'h' }),
-  date: flags.string({ char: 'd', description: 'delete all tweets before this date' }),
 };
 
 module.exports = TweetCommand;
