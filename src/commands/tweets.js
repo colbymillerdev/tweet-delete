@@ -158,7 +158,7 @@ class TweetCommand extends Command {
     }
 
     this.log(chalk.white(`${deleteCount} tweet(s) successfully deleted.`));
-    this.log(chalk.white(`${retweetCount} tweet(s) successfull unretweeted.`));
+    this.log(chalk.white(`${retweetCount} tweet(s) successfully unretweeted.`));
   }
 }
 
