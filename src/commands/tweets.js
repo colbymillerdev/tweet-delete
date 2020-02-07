@@ -53,6 +53,12 @@ const inputValidator = value => {
   return true;
 };
 
+const dateValidator = value => {
+  const validDate = moment(value, 'MM-DD-YYYY', true).isValid();
+  if (validDate) return true;
+  return 'Please enter a valid date (MM-DD-YYYY)';
+};
+
 class TweetCommand extends Command {
   async run() {
     let deleteCount = 0;
@@ -82,11 +88,7 @@ class TweetCommand extends Command {
           name: 'inputDate',
           message: 'Delete tweets starting from what date?',
           default: moment().format('MM-DD-YYYY'),
-          validate: value => {
-            const validDate = moment(value, 'MM-DD-YYYY', true).isValid();
-            if (validDate) return true;
-            return 'Please enter a valid date';
-          },
+          validate: dateValidator,
         },
         {
           type: 'input',
