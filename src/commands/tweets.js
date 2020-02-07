@@ -2,6 +2,7 @@ const { Command, flags } = require('@oclif/command');
 const fs = require('fs');
 const moment = require('moment');
 const OAuth = require('oauth');
+const inquirer = require('inquirer');
 
 const config = {
   consumer_key: '',
@@ -58,8 +59,6 @@ class TweetCommand extends Command {
     originalFile = originalFile.replace('window.YTD.tweet.part0 = ', '');
     const tweets = JSON.parse(originalFile);
 
-    // TODO: Add in user friendly prompts to gather information.
-
     // Authenticate.
     const oauth = new OAuth.OAuth(
       'https://api.twitter.com/oauth/request_token',
@@ -72,6 +71,58 @@ class TweetCommand extends Command {
     );
 
     try {
+      // Provide user set of prompts to get info.
+      const responses = await inquirer.prompt([
+        {
+          type: 'input',
+          name: 'date',
+          message: 'Delete tweets starting from what date?',
+          default: moment().format('MM-DD-YYYY'),
+        },
+        {
+          type: 'input',
+          name: 'consumerKey',
+          message: 'Enter your "API Key" value:',
+          validate: value => {
+            if (value === '') return 'Please enter a value';
+            return true;
+          },
+        },
+        {
+          type: 'input',
+          name: 'consumerSecret',
+          message: 'Enter your "API Secret Key" value:',
+          validate: value => {
+            if (value === '') return 'Please enter a value';
+            return true;
+          },
+        },
+        {
+          type: 'input',
+          name: 'accessTokenKey',
+          message: 'Enter your "Access Token" value:',
+          validate: value => {
+            if (value === '') return 'Please enter a value';
+            return true;
+          },
+        },
+        {
+          type: 'input',
+          name: 'accessTokenSecret',
+          message: 'Enter your "Access Token Secret" value:',
+          validate: value => {
+            if (value === '') return 'Please enter a value';
+            return true;
+          },
+        },
+      ]);
+
+      // Set config properties.
+      config.consumer_key = responses.consumerKey;
+      config.consumer_secret = responses.consumerSecret;
+      config.access_token_key = responses.accessTokenKey;
+      config.access_token_secret = responses.accessTokenSecret;
+
       await Promise.all(
         tweets.map(async ({ tweet }) => {
           const tweetDate = new Date(tweet.created_at);
