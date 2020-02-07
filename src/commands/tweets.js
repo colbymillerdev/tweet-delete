@@ -70,17 +70,6 @@ class TweetCommand extends Command {
     originalFile = originalFile.replace('window.YTD.tweet.part0 = ', '');
     const tweets = JSON.parse(originalFile);
 
-    // Authenticate.
-    const oauth = new OAuth.OAuth(
-      'https://api.twitter.com/oauth/request_token',
-      'https://api.twitter.com/oauth/access_token',
-      config.consumer_key,
-      config.consumer_secret,
-      '1.0A',
-      null,
-      'HMAC-SHA1'
-    );
-
     try {
       // Provide user with a set of prompts.
       const responses = await inquirer.prompt([
@@ -123,6 +112,17 @@ class TweetCommand extends Command {
       config.access_token_key = responses.accessTokenKey;
       config.access_token_secret = responses.accessTokenSecret;
 
+      // Authenticate.
+      const oauth = new OAuth.OAuth(
+        'https://api.twitter.com/oauth/request_token',
+        'https://api.twitter.com/oauth/access_token',
+        config.consumer_key,
+        config.consumer_secret,
+        '1.0A',
+        null,
+        'HMAC-SHA1'
+      );
+
       const inputDate = new Date(responses.inputDate);
 
       cli.action.start(chalk.red('Deleting tweets 💥'));
@@ -135,7 +135,6 @@ class TweetCommand extends Command {
           if (tweet.full_text.startsWith('RT') || tweet.retweet_status) {
             return unretweet(tweet.id, oauth)
               .then(() => {
-                this.log(`Unretweeted tweet ${tweet.id}`);
                 retweetCount += 1;
               })
               .catch(() => this.log(chalk.gray(`There was an issue trying to unretweet tweet ${tweet.id}`)));
@@ -143,7 +142,6 @@ class TweetCommand extends Command {
 
           return deleteTweet(tweet.id, oauth)
             .then(() => {
-              this.log(`Deleted tweet ${tweet.id}`);
               deleteCount += 1;
             })
             .catch(() => this.log(chalk.gray(`There was an issue trying to delete tweet ${tweet.id}`)));
