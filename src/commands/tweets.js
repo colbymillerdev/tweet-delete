@@ -125,7 +125,7 @@ class TweetCommand extends Command {
 
       const inputDate = new Date(responses.inputDate);
 
-      cli.action.start(chalk.gray('Deleting tweets 💥'));
+      cli.action.start(chalk.red('Deleting tweets 💥'));
 
       await Promise.all(
         tweets.map(async ({ tweet }) => {
@@ -150,10 +150,10 @@ class TweetCommand extends Command {
         })
       );
 
-      cli.action.stop(chalk.gray('done'));
+      cli.action.stop(chalk.white('done'));
     } catch (e) {
       this.error(
-        `Please make sure your Consumer Keys and Access Tokens are entered correctly.\n\nIt is also possible Twitter has updated the JSON structure of tweet.js. Please create an issue at ${chalk.underline.bold(
+        `It is possible Twitter has updated the JSON structure of tweet.js. Please create an issue at ${chalk.underline.bold(
           'https://github.com/colbymillerdev/tweet-delete/issues'
         )} so tweet-delete can be updated 🙂`
       );
