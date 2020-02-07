@@ -4,6 +4,7 @@ const moment = require('moment');
 const OAuth = require('oauth');
 const inquirer = require('inquirer');
 const { cli } = require('cli-ux');
+const chalk = require('chalk');
 
 const config = {
   consumer_key: '',
@@ -86,32 +87,32 @@ class TweetCommand extends Command {
         {
           type: 'input',
           name: 'inputDate',
-          message: 'Delete tweets starting from what date?',
+          message: chalk.blue('Delete tweets starting from what date?'),
           default: moment().format('MM-DD-YYYY'),
           validate: dateValidator,
         },
         {
           type: 'input',
           name: 'consumerKey',
-          message: 'Enter your "API Key" value:',
+          message: chalk.magenta('Enter your "API Key" value:'),
           validate: inputValidator,
         },
         {
           type: 'input',
           name: 'consumerSecret',
-          message: 'Enter your "API Secret Key" value:',
+          message: chalk.blue('Enter your "API Secret Key" value:'),
           validate: inputValidator,
         },
         {
           type: 'input',
           name: 'accessTokenKey',
-          message: 'Enter your "Access Token" value:',
+          message: chalk.magenta('Enter your "Access Token" value:'),
           validate: inputValidator,
         },
         {
           type: 'input',
           name: 'accessTokenSecret',
-          message: 'Enter your "Access Token Secret" value:',
+          message: chalk.blue('Enter your "Access Token Secret" value:'),
           validate: inputValidator,
         },
       ]);
@@ -124,7 +125,7 @@ class TweetCommand extends Command {
 
       const inputDate = new Date(responses.inputDate);
 
-      cli.action.start('Deleting tweets 💥');
+      cli.action.start(chalk.gray('Deleting tweets 💥'));
 
       await Promise.all(
         tweets.map(async ({ tweet }) => {
@@ -137,7 +138,7 @@ class TweetCommand extends Command {
                 this.log(`Unretweeted tweet ${tweet.id}`);
                 retweetCount += 1;
               })
-              .catch(() => this.log(`There was an issue trying to unretweet tweet ${tweet.id}`));
+              .catch(() => this.log(chalk.gray(`There was an issue trying to unretweet tweet ${tweet.id}`)));
           }
 
           return deleteTweet(tweet.id, oauth)
@@ -145,19 +146,21 @@ class TweetCommand extends Command {
               this.log(`Deleted tweet ${tweet.id}`);
               deleteCount += 1;
             })
-            .catch(() => this.log(`There was an issue trying to delete tweet ${tweet.id}`));
+            .catch(() => this.log(chalk.gray(`There was an issue trying to delete tweet ${tweet.id}`)));
         })
       );
 
-      cli.action.stop();
+      cli.action.stop(chalk.gray('done'));
     } catch (e) {
       this.error(
-        'Please make sure your Consumer Keys and Access Tokens are entered correctly.\n\nIt is also possible Twitter has updated the JSON structure of tweet.js. Please create an issue at https://github.com/colbymillerdev/tweet-delete/issues so tweet-delete can be updated 🙂'
+        `Please make sure your Consumer Keys and Access Tokens are entered correctly.\n\nIt is also possible Twitter has updated the JSON structure of tweet.js. Please create an issue at ${chalk.underline.bold(
+          'https://github.com/colbymillerdev/tweet-delete/issues'
+        )} so tweet-delete can be updated 🙂`
       );
     }
 
-    this.log(`${deleteCount} tweet(s) successfully deleted.`);
-    this.log(`${retweetCount} tweet(s) successfull unretweeted.`);
+    this.log(chalk.white(`${deleteCount} tweet(s) successfully deleted.`));
+    this.log(chalk.white(`${retweetCount} tweet(s) successfull unretweeted.`));
   }
 }
 
