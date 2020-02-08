@@ -125,7 +125,7 @@ class TweetCommand extends Command {
 
       const inputDate = new Date(responses.inputDate);
 
-      cli.action.start(chalk.red('Deleting tweets 💥'));
+      cli.action.start(chalk.gray('💥 Deleting tweets'));
 
       await Promise.all(
         tweets.map(async ({ tweet }) => {
@@ -137,18 +137,18 @@ class TweetCommand extends Command {
               .then(() => {
                 retweetCount += 1;
               })
-              .catch(() => this.log(chalk.gray(`There was an issue trying to unretweet tweet ${tweet.id}`)));
+              .catch(() => this.log(`${chalk.red('error')} ${chalk.gray(`There was an issue trying to unretweet tweet ${tweet.id}`)}`));
           }
 
           return deleteTweet(tweet.id, oauth)
             .then(() => {
               deleteCount += 1;
             })
-            .catch(() => this.log(chalk.gray(`There was an issue trying to delete tweet ${tweet.id}`)));
+            .catch(() => this.log(`${chalk.red('error')} ${chalk.gray(`There was an issue trying to delete tweet ${tweet.id}`)}`));
         })
       );
 
-      cli.action.stop(chalk.white('done'));
+      cli.action.stop(chalk.green('done'));
     } catch (e) {
       this.error(
         `It is possible Twitter has updated the JSON structure of tweet.js. Please create an issue at ${chalk.underline.bold(
