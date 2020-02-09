@@ -66,7 +66,7 @@ class TweetCommand extends Command {
     let retweetCount = 0;
 
     // TODO: Change back to tweet.js
-    let originalFile = fs.readFileSync('tweet-copy.js', 'utf8');
+    let originalFile = fs.readFileSync('tweet.js', 'utf8');
     originalFile = originalFile.replace('window.YTD.tweet.part0 = ', '');
     const tweets = JSON.parse(originalFile);
 
@@ -125,7 +125,7 @@ class TweetCommand extends Command {
 
       const inputDate = new Date(responses.inputDate);
 
-      cli.action.start(chalk.gray('💥 Deleting tweets'));
+      cli.action.start(chalk.green('💥 Deleting tweets'));
 
       await Promise.all(
         tweets.map(async ({ tweet }) => {
@@ -135,6 +135,7 @@ class TweetCommand extends Command {
           if (tweet.full_text.startsWith('RT') || tweet.retweet_status) {
             return unretweet(tweet.id, oauth)
               .then(() => {
+                this.log(`${chalk.green('success')} ${chalk.gray(`Successfully unretweeted tweet ${tweet.id}`)}`)
                 retweetCount += 1;
               })
               .catch(() => this.log(`${chalk.red('error')} ${chalk.gray(`There was an issue trying to unretweet tweet ${tweet.id}`)}`));
@@ -142,13 +143,14 @@ class TweetCommand extends Command {
 
           return deleteTweet(tweet.id, oauth)
             .then(() => {
+              this.log(`${chalk.green('success')} ${chalk.gray(`Successfully deleted tweet ${tweet.id}`)}`)
               deleteCount += 1;
             })
             .catch(() => this.log(`${chalk.red('error')} ${chalk.gray(`There was an issue trying to delete tweet ${tweet.id}`)}`));
         })
       );
 
-      cli.action.stop(chalk.green('done'));
+      cli.action.stop(chalk.green('done 💥'));
     } catch (e) {
       this.error(
         `It is possible Twitter has updated the JSON structure of tweet.js. Please create an issue at ${chalk.underline.bold(
