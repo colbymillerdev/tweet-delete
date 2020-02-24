@@ -34,7 +34,12 @@
   ],
   "homepage": "https://github.com/colbymillerdev/tweet-delete",
   "keywords": [
-    "oclif"
+    "oclif",
+    "node",
+    "twitter",
+    "api",
+    "delete tweets",
+    "cli"
   ],
   "license": "MIT",
   "main": "src/index.js",
