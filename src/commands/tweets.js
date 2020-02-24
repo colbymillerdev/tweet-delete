@@ -65,7 +65,6 @@ class TweetCommand extends Command {
     let deleteCount = 0;
     let retweetCount = 0;
 
-    // TODO: Change back to tweet.js
     let originalFile = fs.readFileSync('tweet.js', 'utf8');
     originalFile = originalFile.replace('window.YTD.tweet.part0 = ', '');
     const tweets = JSON.parse(originalFile);
@@ -135,18 +134,24 @@ class TweetCommand extends Command {
           if (tweet.full_text.startsWith('RT') || tweet.retweet_status) {
             return unretweet(tweet.id, oauth)
               .then(() => {
-                this.log(`${chalk.green('success')} ${chalk.gray(`Successfully unretweeted tweet ${tweet.id}`)}`)
+                this.log(`${chalk.green('success')} ${chalk.gray(`Successfully unretweeted tweet ${tweet.id}`)}`);
                 retweetCount += 1;
               })
-              .catch(() => this.log(`${chalk.red('error')} ${chalk.gray(`There was an issue trying to unretweet tweet ${tweet.id}`)}`));
+              .catch(() =>
+                this.log(
+                  `${chalk.red('error')} ${chalk.gray(`There was an issue trying to unretweet tweet ${tweet.id}`)}`
+                )
+              );
           }
 
           return deleteTweet(tweet.id, oauth)
             .then(() => {
-              this.log(`${chalk.green('success')} ${chalk.gray(`Successfully deleted tweet ${tweet.id}`)}`)
+              this.log(`${chalk.green('success')} ${chalk.gray(`Successfully deleted tweet ${tweet.id}`)}`);
               deleteCount += 1;
             })
-            .catch(() => this.log(`${chalk.red('error')} ${chalk.gray(`There was an issue trying to delete tweet ${tweet.id}`)}`));
+            .catch(() =>
+              this.log(`${chalk.red('error')} ${chalk.gray(`There was an issue trying to delete tweet ${tweet.id}`)}`)
+            );
         })
       );
 
