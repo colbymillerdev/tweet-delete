@@ -71,9 +71,7 @@ Go to the folder containing the _tweet.js_ file and run the following command:
 npx tweet-delete tweets
 ```
 
-Follow the prompts displayed in the terminal. These will ask for the starting deletion date, as well as the 4 keys from the created Twitter app in your developer account.
-
-**WARNING: THIS IS A DESTRUCTIVE AND PERMANENT OPERATION. ALL TWEETS AFTER AND INCLUDING THE DATE ENTERED WILL BE DELETED AND UNABLE TO BE RECOVERED.**
+Follow the prompts displayed in the terminal to provide the required information.
 
 # Commands
 
