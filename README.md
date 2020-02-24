@@ -16,17 +16,17 @@ Below we will run through all the steps needed to get setup for successfully run
 
 ### Apply for a Twitter Developer Account
 
-Go [here](https://developer.twitter.com/en/apply) to request your a Twitter Developer Account.
+Go [here](https://developer.twitter.com/en/apply) to request a Twitter Developer Account.
 
 1. Under the **Hobbyist** column, select the **Building tools for Twitter Users** option then click **Next**
 2. Fill out the rest of the questions and forms as required.
-3. When you reach the intended use section, enter something similar to the following:
+3. When you reach the intended use section, enter something like the following:
 
 ```
 A tool that will be used to remove a Twitter users tweets and retweets after a specified date. This tool will not store any Twitter or user data. Also, there will be no analytics done on any Twitter data.
 ```
 
-4. Submit the application. The review process is normally very quick and you should be approved within minutes.
+When finished, submit the application. The review process is normally very quick and you should be approved within minutes.
 
 ### Create Twitter API Keys for Authentication
 
@@ -37,8 +37,8 @@ Once you have been approved for a developer account, go [here](https://apps.twit
 3. You will be prompted to Apply for a Twitter developer account if you don't already have one (See above section).
 4. Fill out all the required fields in the form.
    1. **App name:** This can be anything.
-   2. **Application desceiption:** This can be anything as long as its more than 10 characters.
-   3. **Website URL:** I would suggest using this github repo URL [https://github.com/colbymillerdev/tweet-delete](https://github.com/colbymillerdev/tweet-delete)
+   2. **Application description:** This can be anything as long as its more than 10 characters.
+   3. **Website URL:** I would suggest using this GitHub repo URL [https://github.com/colbymillerdev/tweet-delete](https://github.com/colbymillerdev/tweet-delete)
    4. **Tell us how this app will be used:** This can be anything as long as its more than 100 characters. I would suggest using the description we used in the above section
    ```
    A tool that will be used to remove a Twitter users tweets and retweets after a specified date. This tool will not store any Twitter or user data. Also, there will be no analytics done on any Twitter data.
