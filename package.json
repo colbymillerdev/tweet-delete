@@ -11,6 +11,7 @@
     "@oclif/command": "^1",
     "@oclif/config": "^1",
     "@oclif/plugin-help": "^2",
+    "bluebird": "^3.7.2",
     "chalk": "^3.0.0",
     "cli-ux": "^5.4.4",
     "inquirer": "^7.0.4",

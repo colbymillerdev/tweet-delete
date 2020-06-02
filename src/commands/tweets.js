@@ -5,6 +5,7 @@ const OAuth = require('oauth');
 const inquirer = require('inquirer');
 const { cli } = require('cli-ux');
 const chalk = require('chalk');
+const Bluebird = require('bluebird');
 
 const config = {
   consumer_key: '',
@@ -126,34 +127,32 @@ class TweetCommand extends Command {
 
       cli.action.start(chalk.green('💥 Deleting tweets'));
 
-      await Promise.all(
-        tweets.map(async ({ tweet }) => {
-          const tweetDate = new Date(tweet.created_at);
-          if (moment(tweetDate).isAfter(moment(inputDate))) return;
+      await Bluebird.each(tweets, async ({ tweet }) => {
+        const tweetDate = new Date(tweet.created_at);
+        if (moment(tweetDate).isAfter(moment(inputDate))) return;
 
-          if (tweet.full_text.startsWith('RT') || tweet.retweet_status) {
-            return unretweet(tweet.id, oauth)
-              .then(() => {
-                this.log(`${chalk.green('success')} ${chalk.gray(`Successfully unretweeted tweet ${tweet.id}`)}`);
-                retweetCount += 1;
-              })
-              .catch(() =>
-                this.log(
-                  `${chalk.red('error')} ${chalk.gray(`There was an issue trying to unretweet tweet ${tweet.id}`)}`
-                )
-              );
-          }
-
-          return deleteTweet(tweet.id, oauth)
+        if (tweet.full_text.startsWith('RT') || tweet.retweet_status) {
+          return unretweet(tweet.id, oauth)
             .then(() => {
-              this.log(`${chalk.green('success')} ${chalk.gray(`Successfully deleted tweet ${tweet.id}`)}`);
-              deleteCount += 1;
+              this.log(`${chalk.green('success')} ${chalk.gray(`Successfully unretweeted tweet ${tweet.id}`)}`);
+              retweetCount += 1;
             })
             .catch(() =>
-              this.log(`${chalk.red('error')} ${chalk.gray(`There was an issue trying to delete tweet ${tweet.id}`)}`)
+              this.log(
+                `${chalk.red('error')} ${chalk.gray(`There was an issue trying to unretweet tweet ${tweet.id}`)}`
+              )
             );
-        })
-      );
+        }
+
+        return deleteTweet(tweet.id, oauth)
+          .then(() => {
+            this.log(`${chalk.green('success')} ${chalk.gray(`Successfully deleted tweet ${tweet.id}`)}`);
+            deleteCount += 1;
+          })
+          .catch(() =>
+            this.log(`${chalk.red('error')} ${chalk.gray(`There was an issue trying to delete tweet ${tweet.id}`)}`)
+          );
+      });
 
       cli.action.stop(chalk.green('done 💥'));
     } catch (e) {
