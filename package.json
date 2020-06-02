@@ -1,7 +1,7 @@
 {
   "name": "tweet-delete",
   "description": "CLI tool to help keep your Twitter feed clean by removing all tweets before a specified date!",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "author": "Colby Miller @colbymillerdev",
   "bin": {
     "tweet-delete": "./bin/run"
