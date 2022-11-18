@@ -57,7 +57,7 @@ The next step is to download an archive of all Twitter data for the account.
 3. Click the **Download archive** button next to **Twitter**.
 4. Wait for Twitter to send you an email saying your archive is ready, then download it.
 5. Create a folder on your computer where you will run this CLI tool OR it can be run directly in the unzipped Twitter archive.
-   1. If deciding to create a separate folder, open the archive and copy the _tweet.js_ file to the newly created folder.
+   1. If deciding to create a separate folder, open the archive and copy the _tweets.js_ file to the newly created folder.
 
 ### Installing Node and NPM
 
@@ -65,7 +65,7 @@ This CLI tool requires having a version of Node and NPM installed on your comput
 
 # Usage
 
-Go to the folder containing the _tweet.js_ file and run the following command:
+Go to the folder containing the _tweets.js_ file and run the following command:
 
 ```
 npx tweet-delete tweets

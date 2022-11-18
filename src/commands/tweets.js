@@ -66,8 +66,8 @@ class TweetCommand extends Command {
     let deleteCount = 0;
     let retweetCount = 0;
 
-    let originalFile = fs.readFileSync('tweet.js', 'utf8');
-    originalFile = originalFile.replace('window.YTD.tweet.part0 = ', '');
+    let originalFile = fs.readFileSync('tweets.js', 'utf8');
+    originalFile = originalFile.replace('window.YTD.tweets.part0 = ', '');
     const tweets = JSON.parse(originalFile);
 
     try {
